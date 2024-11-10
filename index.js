@@ -1,3 +1,4 @@
+// Import required packages
 const express = require('express');
 const session = require('express-session'); // Import session management
 const mongoose = require('mongoose');
@@ -6,9 +7,10 @@ const dotenv = require('dotenv');
 const userRoutes = require('./reges');
 const loginRoutes = require('./login');
 const menuRoutes = require('./menu');
-//const user_routs = require('./users');
-const app = express();
+
 dotenv.config();
+
+const app = express();
 
 // Middleware
 app.use(cors());
@@ -26,23 +28,23 @@ app.use(session({
 app.use('/api', userRoutes); 
 app.use('/api', loginRoutes); 
 app.use('/api', menuRoutes);
-//app.use('/api', user_routs);
 
 // Root route for testing server status
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// MongoDB Connection
-async function main() {
-  try {
-    await mongoose.connect('mongodb://127.0.0.1:27017/me');
-    console.log('Connected to MongoDB');
-  } catch (err) {
-    console.log('Error connecting to MongoDB:', err);
-  }
-}
-main();
+// Connect to MongoDB Atlas using Mongoose
+mongoose.connect(process.env.MONGO_URI, { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true 
+})
+.then(() => {
+  console.log("Mongodb connected Successfully");
+})
+.catch((error) => {
+  console.log("Error connecting to MongoDB:", error);
+});
 
 // Start server
 const PORT = process.env.PORT || 3002;
